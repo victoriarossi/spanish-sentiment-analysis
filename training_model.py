@@ -33,7 +33,7 @@ train.to_csv(f'./datasets/training/{filename}_train.csv', index=False)
 
 df = train
 
-print("✅ Data loaded.")
+print("Data loaded.")
 
 # ----- Tokenize -----
 model_id = "dccuchile/bert-base-spanish-wwm-uncased" 
@@ -82,7 +82,7 @@ def evaluate(model, data_loader):
             total += b_labels.size(0)
     return correct / max(total, 1)
 
-print("✅ Model and Data ready, starting training...")
+print("Model and Data ready, starting training...")
 # ----- Train (tiny dataset → few epochs) -----
 EPOCHS = 20
 for epoch in range(EPOCHS):

@@ -2,10 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import glob
 
 # Find all CSV files in the current directory
-csv_files = glob.glob('./predictions/pretrained_in_ES/*_predictions.csv')
+csv_files = ["./predictions/pretrained_in_ES/reviews_filmaffinity_predictions.csv",
+             "./predictions/pretrained_in_ES/sentiment_analysis_predictions.csv",
+             "./predictions/pretrained_in_ES/tweets_predictions.csv",
+             "./predictions/pretrained_in_ES/textos_turisticos_predictions.csv"]
 
 print("Files found for analysis:")
 print(csv_files)
