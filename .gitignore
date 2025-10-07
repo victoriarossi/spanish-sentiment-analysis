@@ -1,3 +1,4 @@
 ./polarity_model
+polarity_model/
 ./polarity_model/*
 .DS_Store
