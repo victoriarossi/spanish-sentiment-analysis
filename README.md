@@ -54,10 +54,10 @@ python3 analyzing_predictions.py
 - Confusion matrices and comparison plots
 
 ## Requirements
-torch
-transformers
-pandas
-numpy
-matplotlib
-scikit-learn
+- torch
+- transformers
+- pandas
+- numpy
+- matplotlib
+- scikit-learn
 
