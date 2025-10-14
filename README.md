@@ -13,14 +13,19 @@ This project trains and evaluates transformer-based models for sentiment analysi
 The project uses multiple annotated datasets:
 - **FilmAffinity Reviews:** Spanish movie reviews labeled by sentiment.  
 - **Spanish Tweets Corpus:** Tweets annotated with sentiment categories.  
-- **Custom Dataset:** Manually annotated texts for validation.
+- **Sentiment Analysis Corpus:** Tweets annothated with sentiment from https://github.com/Kevin-Palacios/bitacora-diarIA/blob/main/Analisis%20de%20Sentimiento/Obtencion%20de%20datos/sentiment_dataframe.csv.
 
 Each dataset includes:
+test, normalized_sentiment
+
+## Predictions
+This project will generate a file for each dataset with the predictions made by the model.
+Each file includes:
 content,pred_label,pred_id,pred_confidence,gold_label
 
 
 ## Model
-- **Base model:** `dccuchile/bert-base-spanish-wwm-cased`  
+- **Base model:** `xlm-roberta-large`  
 - **Framework:** PyTorch with HuggingFace Transformers  
 - **Tokenizer:** WordPiece  
 - **Optimizer:** AdamW  
@@ -29,7 +34,7 @@ content,pred_label,pred_id,pred_confidence,gold_label
 ## Pipeline
 1. **Preprocessing:** Clean text (normalize, remove symbols, lowercase).  
 2. **Tokenization:** Convert sentences to input IDs and attention masks.  
-3. **Training:** Fine-tune BERT on sentiment labels using cross-entropy loss.  
+3. **Training:** Fine-tune model on sentiment labels using cross-entropy loss.  
 4. **Evaluation:** Generate predictions and compute metrics.  
 5. **Analysis:** Visualize results and compare performance across datasets.
 
