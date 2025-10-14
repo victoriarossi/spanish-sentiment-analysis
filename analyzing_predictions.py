@@ -4,10 +4,11 @@ import seaborn as sns
 import numpy as np
 
 # Find all CSV files in the current directory
-csv_files = ["./predictions/pretrained_in_ES/reviews_filmaffinity_predictions.csv",
-             "./predictions/pretrained_in_ES/sentiment_analysis_predictions.csv",
-             "./predictions/pretrained_in_ES/tweets_predictions.csv",
-             "./predictions/pretrained_in_ES/textos_turisticos_predictions.csv"]
+csv_files = ["./predictions/reviews_filmaffinity_predictions.csv",
+             "./predictions/sentiment_analysis_predictions.csv",
+             "./predictions/tweets_predictions.csv",
+            #  "./predictions/textos_turisticos_predictions.csv"
+             ]
 
 print("Files found for analysis:")
 print(csv_files)
@@ -15,7 +16,8 @@ print(csv_files)
 csv_original_files = ["./datasets/full datasets/reviews_filmaffinity_with_annotations.csv",
                       "./datasets/full datasets/sentiment_analysis_dataset_with_annotations.csv",
                       "./datasets/full datasets/tweets_with_annotations.csv",
-                      "./datasets/full datasets/train_textos_turisticos.csv"]
+                    #   "./datasets/full datasets/train_textos_turisticos.csv"
+                      ]
 
 results = {}
 
@@ -48,7 +50,7 @@ combined_df = pd.concat(all_data, ignore_index=True)
 
 # Create visualization 1: Bar chart
 plt.figure(figsize=(10, 6))
-names = ['Reviews FilmAffinity', 'Sentiment Analysis Dataset', 'Tweets with Annotations', 'Train Textos Turisticos']
+names = ['Reviews FilmAffinity', 'Sentiment Analysis', 'Tweets']
 plt.bar(names, results.values(), color=['blue', 'red','green'])
 plt.xlabel('Files')
 plt.ylabel('Accuracy (%)')
