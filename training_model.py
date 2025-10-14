@@ -1,52 +1,54 @@
-import os, io, csv, json, random
+import os, json, random
 import numpy as np
 import pandas as pd
 import torch
-
 from sklearn.model_selection import train_test_split
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# ----- Reproducibility -----
+
 SEED = 2018
-random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED); torch.cuda.manual_seed_all(SEED)
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
 
 # ----- Import CSV -----
 
-# filename = "train_textos_turisticos"
+# filename = "train_textos_turisticos_with_annotations"
 # filename = "tweets_with_annotations" 
-filename = "reviews_filmaffinity_with_annotations"
-# filename = "sentiment_analysis_dataset_with_annotations"
+# filename = "reviews_filmaffinity_with_annotations"
+filename = "sentiment_analysis_dataset_with_annotations"
 
 df = pd.read_csv(f"./datasets/full datasets/{filename}.csv")
 df = df[["text", "normalized_sentiment"]]
 
-print(df.head())
+# print(df.head())
 
 
 train = df.sample(frac=0.8, random_state=SEED)
 test = df.drop(train.index)
 print(f"Train size: {len(train)} | Test size: {len(test)}")
 
-test.to_csv(f'./datasets/testing/{filename}_test.csv', index=False)
-train.to_csv(f'./datasets/training/{filename}_train.csv', index=False)
+until = len(filename) - len("_with_annotations")
+test.to_csv(f'./datasets/testing/{filename[:until]}_test.csv', index=False)
+train.to_csv(f'./datasets/training/{filename[:until]}_train.csv', index=False)
 
 df = train
 
 print("Data loaded.")
 
 # ----- Tokenize -----
-model_id = "dccuchile/bert-base-spanish-wwm-uncased" 
-tokenizer = BertTokenizer.from_pretrained(model_id)
+model_id = "xlm-roberta-large"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
 enc = tokenizer(
-    df["text"].tolist(),
-    padding="max_length",
-    truncation=True,
-    max_length=128,
+    df["text"].tolist(), 
+    padding="max_length", 
+    truncation=True, 
+    max_length=128, 
     return_tensors="pt"
 )
-input_ids = enc["input_ids"]
-attention_masks = enc["attention_mask"]
+input_ids, attention_masks = enc["input_ids"], enc["attention_mask"]
 
 # ----- Labels -----
 codes, uniques = pd.factorize(df["normalized_sentiment"].astype(str).str.strip())
@@ -63,44 +65,52 @@ train_loader = DataLoader(train_ds, sampler=RandomSampler(train_ds), batch_size=
 val_loader   = DataLoader(val_ds,   sampler=SequentialSampler(val_ds),  batch_size=8)
 
 # ----- Model -----
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = BertForSequenceClassification.from_pretrained(model_id, num_labels=num_labels)
-model.to(device)
-
+device = torch.device("cpu")
+model = AutoModelForSequenceClassification.from_pretrained(model_id, num_labels=num_labels).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+use_mps = torch.backends.mps.is_available()
+# scaler = torch.cuda.amp.GradScaler(enabled=not use_mps and torch.cuda.is_available())
 
-def evaluate(model, data_loader):
-    model.eval()
-    correct = total = 0
+def evaluate(m, loader):
+    m.eval(); correct=total=0; loss_sum=0.0; n=0
     with torch.no_grad():
-        for batch in data_loader:
-            b_input_ids, b_mask, b_labels = [t.to(device) for t in batch]
-            out = model(b_input_ids, attention_mask=b_mask, labels=b_labels)
-            logits = out.logits
-            preds = torch.argmax(logits, dim=1)
-            correct += (preds == b_labels).sum().item()
-            total += b_labels.size(0)
-    return correct / max(total, 1)
+        for x, msk, y in loader:
+            x, msk, y = x.to(device), msk.to(device), y.to(device)
+            out = m(x, attention_mask=msk, labels=y)
+            pred = out.logits.argmax(1)
+            correct += (pred==y).sum().item(); total += y.size(0)
+            loss_sum += out.loss.item(); n += 1
+    return (correct/max(total,1)), (loss_sum/max(n,1))
+
 
 print("Model and Data ready, starting training...")
-# ----- Train (tiny dataset → few epochs) -----
-EPOCHS = 20
-for epoch in range(EPOCHS):
-    model.train()
-    running_loss = 0.0
-    print("Epoch ", epoch+1, " of ", EPOCHS)
-    for step, batch in enumerate(train_loader):
-        print("\t Step: ", step, " of ", len(train_loader))
-        b_input_ids, b_mask, b_labels = [t.to(device) for t in batch]
-        optimizer.zero_grad()
-        out = model(b_input_ids, attention_mask=b_mask, labels=b_labels)
+# ----- Train until convergence -----
+PATIENCE = 3
+MAX_EPOCHS = 20
+best = float("inf")
+no_improve = 0
+
+for epoch in range(1, MAX_EPOCHS+1):
+    model.train(); run_loss=0.0
+    total_steps = len(train_loader)
+    for step, (x, msk, y) in enumerate(train_loader, 1):
+        x, msk, y = x.to(device), msk.to(device), y.to(device)
+        optimizer.zero_grad(set_to_none=True)
+        out = model(x, attention_mask=msk, labels=y)
         loss = out.loss
         loss.backward()
         optimizer.step()
-        running_loss += loss.item()
-
-    val_acc = evaluate(model, val_loader)
-    print(f"Epoch {epoch+1}/{EPOCHS} | loss={running_loss/len(train_loader):.4f} | val_acc={val_acc:.3f}")
+        run_loss += loss.item()
+        print(f"\tStep: {step} of {total_steps}")
+    val_acc, val_loss = evaluate(model, val_loader)
+    print(f"Epoch {epoch} | loss={run_loss/len(train_loader):.4f} | val_loss={val_loss:.4f} | val_acc={val_acc:.3f}")
+    if val_loss < best - 1e-4: 
+        best = val_loss; 
+        no_improve = 0
+    else: 
+        no_improve += 1
+    if no_improve >= PATIENCE: 
+        break
 
 # ----- Save -----
 save_dir = "polarity_model"
@@ -109,4 +119,4 @@ model.save_pretrained(save_dir)
 tokenizer.save_pretrained(save_dir)
 with open(os.path.join(save_dir, "labels.json"), "w") as f:
     json.dump(uniques.tolist(), f)
-print(f"Saved to: {os.path.abspath(save_dir)}")
+print(os.path.abspath(save_dir))
