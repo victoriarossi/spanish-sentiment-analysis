@@ -5,9 +5,11 @@ import torch
 from sklearn.model_selection import train_test_split
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import get_linear_schedule_with_warmup
 
 
 SEED = 2018
+MAX_EPOCHS = 20
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
@@ -61,32 +63,41 @@ train_idx, val_idx = train_test_split(idx, test_size=0.1, random_state=SEED, str
 train_ds = TensorDataset(input_ids[train_idx], attention_masks[train_idx], labels[train_idx])
 val_ds   = TensorDataset(input_ids[val_idx],   attention_masks[val_idx],   labels[val_idx])
 
-train_loader = DataLoader(train_ds, sampler=RandomSampler(train_ds), batch_size=8)
-val_loader   = DataLoader(val_ds,   sampler=SequentialSampler(val_ds),  batch_size=8)
+# Change batch size for smaller dataset (8,16)
+train_loader = DataLoader(train_ds, sampler=RandomSampler(train_ds), batch_size=16)
+val_loader   = DataLoader(val_ds,   sampler=SequentialSampler(val_ds),  batch_size=16)
 
 # ----- Model -----
 device = torch.device("cpu")
 model = AutoModelForSequenceClassification.from_pretrained(model_id, num_labels=num_labels).to(device)
-optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5, weight_decay=0.01)
+total_steps = len(train_loader) * MAX_EPOCHS
+scheduler = get_linear_schedule_with_warmup(
+    optimizer, 
+    num_warmup_steps=int(0.1*total_steps), 
+    num_training_steps=total_steps
+)
 use_mps = torch.backends.mps.is_available()
 # scaler = torch.cuda.amp.GradScaler(enabled=not use_mps and torch.cuda.is_available())
 
 def evaluate(m, loader):
     m.eval(); correct=total=0; loss_sum=0.0; n=0
+    all_preds = [] 
     with torch.no_grad():
         for x, msk, y in loader:
             x, msk, y = x.to(device), msk.to(device), y.to(device)
             out = m(x, attention_mask=msk, labels=y)
             pred = out.logits.argmax(1)
+            all_preds.extend(pred.cpu().numpy())  
             correct += (pred==y).sum().item(); total += y.size(0)
             loss_sum += out.loss.item(); n += 1
+    print(f"  Prediction distribution: {np.bincount(all_preds)}") 
     return (correct/max(total,1)), (loss_sum/max(n,1))
 
 
 print("Model and Data ready, starting training...")
 # ----- Train until convergence -----
 PATIENCE = 3
-MAX_EPOCHS = 20
 best = float("inf")
 no_improve = 0
 
@@ -100,6 +111,7 @@ for epoch in range(1, MAX_EPOCHS+1):
         loss = out.loss
         loss.backward()
         optimizer.step()
+        scheduler.step()
         run_loss += loss.item()
         print(f"\tStep: {step} of {total_steps}")
     val_acc, val_loss = evaluate(model, val_loader)

@@ -5,7 +5,8 @@ import numpy as np
 
 # Find all CSV files in the current directory
 csv_files = ["./predictions/reviews_filmaffinity_predictions.csv",
-             "./predictions/sentiment_analysis_predictions.csv",
+             "./predictions/sentiment_analysis_predictions_b16.csv",
+            "./predictions/sentiment_analysis_predictions_b8.csv",
              "./predictions/tweets_predictions.csv",
             #  "./predictions/textos_turisticos_predictions.csv"
              ]
@@ -14,6 +15,7 @@ print("Files found for analysis:")
 print(csv_files)
 
 csv_original_files = ["./datasets/full datasets/reviews_filmaffinity_with_annotations.csv",
+                      "./datasets/full datasets/sentiment_analysis_dataset_with_annotations.csv",
                       "./datasets/full datasets/sentiment_analysis_dataset_with_annotations.csv",
                       "./datasets/full datasets/tweets_with_annotations.csv",
                     #   "./datasets/full datasets/train_textos_turisticos.csv"
@@ -50,8 +52,8 @@ combined_df = pd.concat(all_data, ignore_index=True)
 
 # Create visualization 1: Bar chart
 plt.figure(figsize=(10, 6))
-names = ['Reviews FilmAffinity', 'Sentiment Analysis', 'Tweets']
-plt.bar(names, results.values(), color=['blue', 'red','green'])
+names = ['Reviews FilmAffinity', 'Sentiment Analysis B16', 'Sentiment Analysis B8', 'Tweets']
+plt.bar(names, results.values(), color=['blue', 'red','pink','green'])
 plt.xlabel('Files')
 plt.ylabel('Accuracy (%)')
 plt.title('BERT Sentiment Prediction Accuracy by File')
