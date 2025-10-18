@@ -1,10 +1,10 @@
 # Sentiment Analysis in Spanish
 
 ## Overview
-This project trains and evaluates transformer-based models for sentiment analysis on Spanish-language datasets. It compares model performance across multiple sources to understand how well each captures sentiment nuances in different text domains (tweets, film reviews, and general text).
+This project fine-tunes and evaluates a xml-roberta-large transformer model for sentiment analysis on Spanish-language datasets. It compares model performance across multiple datasets to understand how well each captures sentiment nuances in different text domains.
 
 ## Objectives
-- Fine-tune a pretrained Spanish BERT model on annotated datasets.  
+- Fine-tune a pretrained Spanish xml-roberta-large model on annotated datasets.  
 - Evaluate model accuracy, precision, recall, and F1-score.  
 - Analyze misclassifications and label distribution across datasets.  
 - Compare results to identify dataset-specific challenges.
@@ -27,7 +27,7 @@ content,pred_label,pred_id,pred_confidence,gold_label
 ## Model
 - **Base model:** `xlm-roberta-large`  
 - **Framework:** PyTorch with HuggingFace Transformers  
-- **Tokenizer:** WordPiece  
+- **Tokenizer:** AutoTokenizer  
 - **Optimizer:** AdamW  
 - **Train/Test split:** 80/20  
 
