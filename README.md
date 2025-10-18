@@ -1,59 +1,48 @@
 # Sentiment Analysis in Spanish
 
 ## Overview
-This project trains and evaluates transformer-based models for sentiment analysis on Spanish-language datasets. It compares model performance across multiple sources to understand how well each captures sentiment nuances in different text domains (tweets, film reviews, and general text).
+This project explores sentiment analysis on Spanish-language text using multiple transformer-based models. The repository contains a comparative study of different architectures trained on various Spanish datasets, including tweets, movie reviews, and general text corpora.
 
-## Objectives
-- Fine-tune a pretrained Spanish BERT model on annotated datasets.  
-- Evaluate model accuracy, precision, recall, and F1-score.  
-- Analyze misclassifications and label distribution across datasets.  
-- Compare results to identify dataset-specific challenges.
+## Project Structure
+This repository is organized into **branches**, where each branch represents a different model implementation:
+
+- **`bert-branch`**: Fine-tuned BERT model for Spanish sentiment analysis
+- **`xml-roberta-large-branch`**: Implementation using XLM-RoBERTa-Large
+- **`mdeberta-branch`**: mDeBERTa model fine-tuned for sentiment classification
+
+Each branch contains:
+- Model-specific training and evaluation scripts
+- Detailed README with setup and usage instructions
+- Model configuration and hyperparameters
 
 ## Datasets
-The project uses multiple annotated datasets:
-- **FilmAffinity Reviews:** Spanish movie reviews labeled by sentiment.  
-- **Spanish Tweets Corpus:** Tweets annotated with sentiment categories.  
-- **Custom Dataset:** Manually annotated texts for validation.
+The models are trained and evaluated on multiple Spanish sentiment datasets:
+- **FilmAffinity Reviews**: Spanish movie reviews with sentiment labels
+- **Spanish Tweets Corpus**: Annotated tweets with sentiment categories
+- **Sentiment Analysis Corpus**: Additional tweet data from [bitacora-diarIA](https://github.com/Kevin-Palacios/bitacora-diarIA/blob/main/Analisis%20de%20Sentimiento/Obtencion%20de%20datos/sentiment_dataframe.csv)
 
-Each dataset includes:
-content,pred_label,pred_id,pred_confidence,gold_label
+## Getting Started
+1. **Choose a model**: Navigate to the desired branch (BERT, XLM-RoBERTa, or mDeBERTa)
+2. **Follow branch instructions**: Each branch has its own README with specific setup and usage details
+3. **Review results**: Return to the main branch to see comparative analysis of every model
 
+## Comparative Analysis
+The **main branch** contains an overall analysis comparing the performance of all models across datasets. Results include:
+- Accuracy, precision, recall, and F1-scores for each model
+- Cross-dataset performance comparisons
+- Confusion matrices and error analysis
+- Visualization of results across different text domains
 
-## Model
-- **Base model:** `dccuchile/bert-base-spanish-wwm-cased`  
-- **Framework:** PyTorch with HuggingFace Transformers  
-- **Tokenizer:** WordPiece  
-- **Optimizer:** AdamW  
-- **Train/Test split:** 80/20  
+All analysis outputs are available in the **`analysis/`** folder, including:
+- Performance comparison plots
+- Dataset-specific insights
+- Misclassification analysis
 
-## Pipeline
-1. **Preprocessing:** Clean text (normalize, remove symbols, lowercase).  
-2. **Tokenization:** Convert sentences to input IDs and attention masks.  
-3. **Training:** Fine-tune BERT on sentiment labels using cross-entropy loss.  
-4. **Evaluation:** Generate predictions and compute metrics.  
-5. **Analysis:** Visualize results and compare performance across datasets.
-
-## Usage
-Run training:
-```bash
-python3 training_model.py
-```
-Run predictions:
-```bash
-python3 test_polarity.py
-```
-Run analysis:
-```bash
-python3 analyzing_predictions.py
-```
-
-## Output includes:
-- Dataset sizes
-- Training progress logs
-- Accuracy and F1 scores
-- Confusion matrices and comparison plots
+## Key Findings
+*(TBD)*
 
 ## Requirements
+Each branch has its own requirements, but common dependencies include:
 - torch
 - transformers
 - pandas
@@ -61,3 +50,13 @@ python3 analyzing_predictions.py
 - matplotlib
 - scikit-learn
 
+See individual branch READMEs for specific version requirements.
+
+## Repository Navigation
+```
+main/               # Overall analysis and comparisons (you are here)
+├── analysis/       # Comparative visualizations and results
+bert-branch/        # BERT implementation
+xml-roberta-large/  # XLM-RoBERTa implementation
+mdeberta-branch/    # mDeBERTa implementation
+```
