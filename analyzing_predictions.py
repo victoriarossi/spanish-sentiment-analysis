@@ -4,9 +4,9 @@ import seaborn as sns
 import numpy as np
 
 # Find all CSV files in the current directory
-csv_files = ["./predictions/pretrained_in_ES/reviews_filmaffinity_predictions.csv",
-             "./predictions/pretrained_in_ES/sentiment_analysis_predictions.csv",
-             "./predictions/pretrained_in_ES/tweets_predictions.csv",
+csv_files = ["./predictions/reviews_filmaffinity_predictions.csv",
+             "./predictions/sentiment_analysis_predictions.csv",
+             "./predictions/tweets_predictions.csv",
             #  "./predictions/pretrained_in_ES/textos_turisticos_predictions.csv"
              ]
 
