@@ -5,9 +5,9 @@ import torch
 
 from sklearn.model_selection import train_test_split
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import get_linear_schedule_with_warmup
-
+from transformers import DebertaV2Tokenizer
 # ----- Reproducibility -----
 SEED = 2018
 random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED); torch.cuda.manual_seed_all(SEED)
@@ -39,8 +39,8 @@ df = train
 print("Data loaded.")
 
 # ----- Tokenize -----
-model_id = "dccuchile/bert-base-spanish-wwm-uncased" 
-tokenizer = BertTokenizer.from_pretrained(model_id)
+model_id = "microsoft/mdeberta-v3-base" 
+tokenizer = DebertaV2Tokenizer.from_pretrained(model_id)
 enc = tokenizer(
     df["text"].tolist(),
     padding="max_length",
@@ -70,7 +70,7 @@ val_loader   = DataLoader(val_ds,   sampler=SequentialSampler(val_ds),  batch_si
 
 # ----- Model -----
 device = torch.device("cpu")
-model = BertForSequenceClassification.from_pretrained(model_id, num_labels=num_labels)
+model = AutoModelForSequenceClassification.from_pretrained(model_id, num_labels=num_labels)
 model.to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
 total_steps = len(train_loader) * MAX_EPOCHS

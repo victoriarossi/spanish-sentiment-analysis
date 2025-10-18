@@ -3,7 +3,7 @@
 #  --csv ./datasets/testing/sentiment_analysis_dataset_test.csv \
 #  --text_col text \
 #  --label_col normalized_sentiment \
-#  --out_csv ./predictions/sentiment_analysis_dataset_predictions.csv
+#  --out_csv ./predictions/sentiment_analysis_predictions.csv
 
 
 #!/usr/bin/env python3
@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import TensorDataset, DataLoader, SequentialSampler
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import DebertaV2Tokenizer, AutoModelForSequenceClassification
 
 def load_labels(model_dir):
     path = os.path.join(model_dir, "labels.json")
@@ -42,7 +42,7 @@ def pick_device():
     return torch.device("cpu"), "CPU"
 
 def main():
-    ap = argparse.ArgumentParser(description="Evaluate a saved BERT classifier on a CSV.")
+    ap = argparse.ArgumentParser(description="Evaluate a saved mDeBERTa classifier on a CSV.")
     ap.add_argument("--model_dir", default="polarity_model", help="Path to directory with saved model & tokenizer")
     ap.add_argument("--csv", default="train_textos_turisticos.cleaned.csv", help="Path to input CSV")
     ap.add_argument("--text_col", default="text", help="Column with input text")
@@ -60,8 +60,8 @@ def main():
 
     # Load model + tokenizer
     print("Loading model and tokenizer...")
-    tokenizer = BertTokenizer.from_pretrained(args.model_dir)
-    model = BertForSequenceClassification.from_pretrained(args.model_dir)
+    tokenizer = DebertaV2Tokenizer.from_pretrained(args.model_dir)
+    model = AutoModelForSequenceClassification.from_pretrained(args.model_dir)
     class_names = load_labels(args.model_dir)  # may be None
     num_labels = model.config.num_labels
     if class_names is None:
