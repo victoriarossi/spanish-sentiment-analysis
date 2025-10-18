@@ -4,7 +4,7 @@
 This project fine-tunes and evaluates a mDeBERTa transformer model for sentiment analysis on Spanish-language datasets. It compares model performance across multiple datasets to understand how well each captures sentiment nuances in different text domains.
 
 ## Objectives
-- Fine-tune a pretrained Spanish BERT model on annotated datasets.  
+- Fine-tune a pretrained Spanish mDeBERTa model on annotated datasets.  
 - Evaluate model accuracy, precision, recall, and F1-score.  
 - Analyze misclassifications and label distribution across datasets.  
 - Compare results to identify dataset-specific challenges.
