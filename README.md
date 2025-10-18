@@ -1,7 +1,7 @@
 # Sentiment Analysis in Spanish
 
 ## Overview
-This project trains and evaluates transformer-based models for sentiment analysis on Spanish-language datasets. It compares model performance across multiple sources to understand how well each captures sentiment nuances in different text domains (tweets, film reviews, and general text).
+This project fine-tunes and evaluates a mDeBERTa transformer model for sentiment analysis on Spanish-language datasets. It compares model performance across multiple datasets to understand how well each captures sentiment nuances in different text domains.
 
 ## Objectives
 - Fine-tune a pretrained Spanish BERT model on annotated datasets.  
@@ -20,16 +20,16 @@ content,pred_label,pred_id,pred_confidence,gold_label
 
 
 ## Model
-- **Base model:** `dccuchile/bert-base-spanish-wwm-cased`  
+- **Base model:** `microsoft/mdeberta-v3-base`  
 - **Framework:** PyTorch with HuggingFace Transformers  
-- **Tokenizer:** WordPiece  
+- **Tokenizer:** DebertaV2Tokenizer  
 - **Optimizer:** AdamW  
 - **Train/Test split:** 80/20  
 
 ## Pipeline
 1. **Preprocessing:** Clean text (normalize, remove symbols, lowercase).  
 2. **Tokenization:** Convert sentences to input IDs and attention masks.  
-3. **Training:** Fine-tune BERT on sentiment labels using cross-entropy loss.  
+3. **Training:** Fine-tune mDeBERTa on sentiment labels using cross-entropy loss.  
 4. **Evaluation:** Generate predictions and compute metrics.  
 5. **Analysis:** Visualize results and compare performance across datasets.
 
