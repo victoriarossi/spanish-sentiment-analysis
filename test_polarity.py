@@ -1,9 +1,9 @@
 # python3 test_polarity.py \
 #  --model_dir polarity_model \
-#  --csv ./datasets/testing/reviews_filmaffinity_with_annotations_test.csv \
+#  --csv ./datasets/testing/sentiment_analysis_dataset_test.csv \
 #  --text_col text \
 #  --label_col normalized_sentiment \
-#  --out_csv ./predictions/pretrained_in_ES/with_annotations_predictions.csv
+#  --out_csv ./predictions/sentiment_analysis_dataset_predictions.csv
 
 
 #!/usr/bin/env python3
