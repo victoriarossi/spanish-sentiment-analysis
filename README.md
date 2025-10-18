@@ -1,7 +1,7 @@
 # Sentiment Analysis in Spanish
 
 ## Overview
-This project trains and evaluates transformer-based models for sentiment analysis on Spanish-language datasets. It compares model performance across multiple sources to understand how well each captures sentiment nuances in different text domains (tweets, film reviews, and general text).
+This project fine-tunes and evaluates a BERT transformer model for sentiment analysis on Spanish-language datasets. It compares model performance across multiple datasets to understand how well each captures sentiment nuances in different text domains.
 
 ## Objectives
 - Fine-tune a pretrained Spanish BERT model on annotated datasets.  
@@ -13,7 +13,7 @@ This project trains and evaluates transformer-based models for sentiment analysi
 The project uses multiple annotated datasets:
 - **FilmAffinity Reviews:** Spanish movie reviews labeled by sentiment.  
 - **Spanish Tweets Corpus:** Tweets annotated with sentiment categories.  
-- **Custom Dataset:** Manually annotated texts for validation.
+- **Sentiment Analysis Corpus:** Tweets annothated with sentiment from https://github.com/Kevin-Palacios/bitacora-diarIA/blob/main/Analisis%20de%20Sentimiento/Obtencion%20de%20datos/sentiment_dataframe.csv.
 
 Each dataset includes:
 content,pred_label,pred_id,pred_confidence,gold_label
