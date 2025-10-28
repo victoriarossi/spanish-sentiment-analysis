@@ -1,0 +1,12 @@
+Error Analysis for sentiment_analysis_predictions
+==================================================
+
+Total Samples: 518
+Total Errors: 76
+Error Rate: 14.67%
+
+Errors by True Label:
+  POSITIVE: 35
+  VERY POSITIVE: 20
+  NEGATIVE: 16
+  VERY NEGATIVE: 5

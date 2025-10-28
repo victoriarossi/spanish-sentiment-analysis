@@ -1,0 +1,13 @@
+Error Analysis for tweets_predictions
+==================================================
+
+Total Samples: 1444
+Total Errors: 630
+Error Rate: 43.63%
+
+Errors by True Label:
+  NEUTRAL: 201
+  POSITIVE: 181
+  VERY NEGATIVE: 100
+  NEGATIVE: 81
+  VERY POSITIVE: 67

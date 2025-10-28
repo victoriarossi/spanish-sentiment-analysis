@@ -1,0 +1,13 @@
+Error Analysis for reviews_filmaffinity_predictions
+==================================================
+
+Total Samples: 1720
+Total Errors: 912
+Error Rate: 53.02%
+
+Errors by True Label:
+  NEUTRAL: 350
+  POSITIVE: 214
+  NEGATIVE: 151
+  VERY NEGATIVE: 106
+  VERY POSITIVE: 91
